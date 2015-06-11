@@ -7,7 +7,8 @@ output:
 
 ## Loading and preprocessing the data
 
-```{R}
+
+```r
 df <- read.csv("activity.csv")
 
 # convert factor to date format
@@ -16,7 +17,8 @@ df$date <- as.Date(as.character(df$date))
 
 ## What is mean total number of steps taken per day?
 
-```{R}
+
+```r
 # split data frame by date
 days <- split(df, df$date)
 
@@ -36,20 +38,32 @@ stepsPerDay <- stepsPerDay[!is.na(stepsPerDay)]
 
 library(ggplot2)
 qplot(stepsPerDay, xlab="total number of steps taken per day")
-
 ```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
 mean of total number of steps taken per day is:
-```{R}
+
+```r
 mean(stepsPerDay)
 ```
+
+```
+## [1] 10766.19
+```
 median of total number of steps taken per day is:
-```{R}
+
+```r
 median(stepsPerDay)
 ```
 
+```
+## [1] 10765
+```
+
 ## What is the average daily activity pattern?
-```{R}
+
+```r
 # split data frame by interval
 itvs <- split(df, df$interval)
 
@@ -65,24 +79,36 @@ ggplot(avgStepDf, aes(time, steps)) +
 geom_line(colour="blue") +
 xlab("5-minute interval") + 
 ylab("average number of steps taken")
-
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
 the interval that contains maximum number of step is:
-```{R}
+
+```r
 # find maximum element, and get its name(time)
 names(which(avgStep == max(avgStep)))
+```
+
+```
+## [1] "835"
 ```
 
 ## Imputing missing values
 
 total number of missing values in the dataset is:
-```{R}
+
+```r
 length(df[is.na(df)])
 ```
 
+```
+## [1] 2304
+```
+
 filling in missing values in the dataset: 
-```{R}
+
+```r
 # a function that caculate the step average in a day
 # and fill the average into NA
 f <- function(x){
@@ -104,21 +130,33 @@ stepsPerDay <- sapply(days, function(x){sum(x$steps)})
 qplot(stepsPerDay, xlab="total number of steps taken per day")
 ```
 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
+
 mean with na value filled in:
-```{R}
+
+```r
 mean(stepsPerDay)
 ```
+
+```
+## [1] 10766.19
+```
 median with na value filled in:
-```{R}
+
+```r
 median(stepsPerDay)
+```
+
+```
+## [1] 10766.19
 ```
 
 we can see the median is closer to mean after we fill NA with the average step in the interval.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{R}
 
+```r
 # a function that convert day string to weekend/weekdays factor
 wk2fac <- function(inp){
     x <- weekdays(as.Date(inp), abbreviate=T)
@@ -152,5 +190,6 @@ avgStepWeekday$type <- as.factor("weekday")
 data <- merge(avgStepWeekend, avgStepWeekday, all=T)
 
 ggplot(data, aes(time, steps)) + geom_line(colour="blue") + facet_grid(type ~ .)
-
 ```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
